@@ -1,0 +1,17 @@
+services:
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      -${GO_BID_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${GO_BID_DATABASE_USE}
+      POSTGRES_PASSWORD: ${GO_BID_DATABASE_NAME}
+      POSTGRES_DB: ${GO_BID_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
