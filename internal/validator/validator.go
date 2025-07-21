@@ -26,7 +26,7 @@ func (e *Evaluator) AddFieldError(key, message string) {
 
 }
 
-func (e *Evaluator) Checkfield(ok bool, key, message string) {
+func (e *Evaluator) CheckField(ok bool, key, message string) {
 	if !ok {
 		e.AddFieldError(key, message)
 	}
