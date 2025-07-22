@@ -31,4 +31,10 @@ func (us *UserService) CreateUser(
 		return uuid.UUID{}, err
 	}
 
+	id, err := us.Store.CreateUser(ctx, userName, email, password, bio)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	return id, nil
 }
