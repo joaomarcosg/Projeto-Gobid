@@ -13,10 +13,10 @@ func TestSignupUser(t *testing.T) {
 	api := Api{}
 
 	payload := map[string]any{
-		"userName": "marcos",
-		"email":    "marcos.santana@gmail.com",
-		"password": "Marcos@2025",
-		"bio":      "testing my api",
+		"user_name": "marcos",
+		"email":     "marcos.santana@gmail.com",
+		"password":  "Marcos@2025",
+		"bio":       "testing my api",
 	}
 
 	body, err := json.Marshal(payload)
@@ -25,7 +25,7 @@ func TestSignupUser(t *testing.T) {
 	}
 
 	req := httptest.NewRequest("POST", "/api/v1/users/signupuser", bytes.NewReader(body))
-	req.Header.Set("Content-Type", "Application/json")
+	req.Header.Set("Content-Type", "application/json")
 
 	rec := httptest.NewRecorder()
 
