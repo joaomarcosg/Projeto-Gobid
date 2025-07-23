@@ -26,12 +26,12 @@ func (us *UserService) CreateUser(
 	bio string,
 ) (uuid.UUID, error) {
 
-	_, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 
-	id, err := us.Store.CreateUser(ctx, userName, email, password, bio)
+	id, err := us.Store.CreateUser(ctx, userName, email, hash, bio)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
