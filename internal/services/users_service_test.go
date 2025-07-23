@@ -25,8 +25,8 @@ func (m *MockUserStore) AuthenticateUser(ctx context.Context, email, password st
 	return uuid.UUID{}, nil
 }
 
-func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (uuid.UUID, error) {
-	return uuid.UUID{}, nil
+func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
+	return store.User{}, nil
 }
 
 func (m *MockUserStore) GetUserById(ctx context.Context, id uuid.UUID) (store.User, error) {
