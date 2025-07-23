@@ -11,7 +11,12 @@ import (
 
 type MockUserStore struct{}
 
-func (m *MockUserStore) CreateUser(ctx context.Context, userName, email, password, bio string) (uuid.UUID, error) {
+func (m *MockUserStore) CreateUser(
+	ctx context.Context,
+	userName,
+	email string,
+	password []byte,
+	bio string) (uuid.UUID, error) {
 	id, _ := uuid.Parse("123e4567-e89b-12d3-a456-426614174000")
 	return id, nil
 }
