@@ -26,7 +26,7 @@ func (us *UserService) CreateUser(
 	bio string,
 ) (uuid.UUID, error) {
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	_, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
