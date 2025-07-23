@@ -53,14 +53,22 @@ func (pgu *PGUserStore) AuthenticateUser(ctx context.Context, email, password st
 
 }
 
-func (pgu *PGUserStore) GetUserByEmail(ctx context.Context, email string) (uuid.UUID, error) {
+func (pgu *PGUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
 
 	user, err := pgu.Queries.GetUserByEmail(ctx, email)
 	if err != nil {
-		return uuid.UUID{}, err
+		return store.User{}, nil
 	}
 
-	return user.ID, nil
+	return store.User{
+		ID:           user.ID,
+		UserName:     user.UserName,
+		Email:        user.Email,
+		PasswordHash: user.PasswordHash,
+		Bio:          user.Bio,
+		CreatedAt:    user.CreatedAt,
+		UpdatedAt:    user.UpdatedAt,
+	}, nil
 
 }
 
