@@ -13,8 +13,8 @@ type PGUserStore struct {
 	Pool    *pgxpool.Pool
 }
 
-func NewPGUserStore(pool *pgxpool.Pool) PGUserStore {
-	return PGUserStore{
+func NewPGUserStore(pool *pgxpool.Pool) *PGUserStore {
+	return &PGUserStore{
 		Queries: New(pool),
 		Pool:    pool,
 	}
