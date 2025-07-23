@@ -19,12 +19,17 @@ func NewPGUserStore(pool *pgxpool.Pool) PGUserStore {
 	}
 }
 
-func (pgu *PGUserStore) CreateUser(ctx context.Context, userName, email, password, bio string) (uuid.UUID, error) {
+func (pgu *PGUserStore) CreateUser(
+	ctx context.Context,
+	userName,
+	email string,
+	password []byte,
+	bio string) (uuid.UUID, error) {
 
 	id, err := pgu.Queries.CreateUser(ctx, CreateUserParams{
 		UserName:     userName,
 		Email:        email,
-		PasswordHash: []byte(password),
+		PasswordHash: password,
 		Bio:          bio,
 	})
 
