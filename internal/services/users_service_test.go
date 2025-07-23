@@ -35,6 +35,6 @@ func TestCreateUser(t *testing.T) {
 	id, err := userService.CreateUser(context.Background(), "Marcos", "marcos@gmail.com", "Senha123456", "Hellom world!")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id)
+	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id.String())
 
 }
