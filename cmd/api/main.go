@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/api"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
+	"github.com/joaomarcosg/Projeto-Gobid/internal/store/pgstore"
 	"github.com/joho/godotenv"
 )
 
@@ -38,9 +39,11 @@ func main() {
 		panic(err)
 	}
 
+	store := pgstore.NewPGUserStore(pool)
+
 	api := api.Api{
 		Router:      chi.NewMux(),
-		UserService: *services.NewUserService(pool),
+		UserService: *services.NewUserService(store),
 	}
 
 	api.BindRoutes()
