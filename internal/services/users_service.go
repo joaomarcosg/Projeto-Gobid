@@ -2,10 +2,16 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
 	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	ErrDuplicatedEmailOrUserName = errors.New("username or email already exists")
 )
 
 type UserService struct {
@@ -33,7 +39,11 @@ func (us *UserService) CreateUser(
 
 	id, err := us.Store.CreateUser(ctx, userName, email, hash, bio)
 	if err != nil {
-		return uuid.UUID{}, err
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return uuid.UUID{}, ErrDuplicatedEmailOrUserName
+		}
+
 	}
 
 	return id, nil
