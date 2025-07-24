@@ -6,7 +6,7 @@ services:
       - ${GO_BID_DATABASE_PORT:-5432}:5432
     environment:
       POSTGRES_USER: ${GO_BID_DATABASE_USER}
-      POSTGRES_PASSWORD: ${GO_BID_DATABASE_NAME}
+      POSTGRES_PASSWORD: ${GO_BID_DATABASE_PASSWORD}
       POSTGRES_DB: ${GO_BID_DATABASE_NAME}
     volumes:
       - db:/var/lib/postgresql/data
