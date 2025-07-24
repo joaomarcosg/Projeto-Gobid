@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/alexedwards/scs/pgxstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/api"
@@ -41,9 +43,13 @@ func main() {
 
 	store := pgstore.NewPGUserStore(pool)
 
+	s := scs.New()
+	s.Store = pgxstore.New(pool)
+
 	api := api.Api{
 		Router:      chi.NewMux(),
 		UserService: *services.NewUserService(store),
+		Sessions:    s,
 	}
 
 	api.BindRoutes()
