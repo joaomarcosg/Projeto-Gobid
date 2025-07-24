@@ -2,15 +2,45 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
+
+	"github.com/google/uuid"
+	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
+	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
 )
 
+type mockUserStore struct{}
+
+func (m *mockUserStore) CreateUser(
+	ctx context.Context,
+	userName,
+	email string,
+	password []byte,
+	bio string) (uuid.UUID, error) {
+	return uuid.New(), nil
+}
+
+func (m *mockUserStore) AuthenticateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
+
+func (m *mockUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
+	return store.User{}, nil
+}
+
+func (m *mockUserStore) GetUserById(ctx context.Context, id uuid.UUID) (store.User, error) {
+	return store.User{}, nil
+}
+
 func TestSignupUser(t *testing.T) {
-	api := Api{}
+
+	api := Api{
+		UserService: *services.NewUserService(&mockUserStore{}),
+	}
 
 	payload := map[string]any{
 		"user_name": "marcos",
@@ -28,7 +58,6 @@ func TestSignupUser(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 
 	rec := httptest.NewRecorder()
-
 	handler := http.HandlerFunc(api.handleSignupUser)
 	handler.ServeHTTP(rec, req)
 
@@ -39,14 +68,13 @@ func TestSignupUser(t *testing.T) {
 	}
 
 	var resBody map[string]any
-
 	err = json.Unmarshal(rec.Body.Bytes(), &resBody)
 	if err != nil {
 		t.Fatalf("failed to parse response body:%s\n", err.Error())
 	}
 
-	if !reflect.DeepEqual(payload, resBody) {
-		t.Errorf("response body differs from payload;got: %q | want %q", resBody, payload)
+	if _, ok := resBody["user_id"]; !ok {
+		t.Errorf("expected 'user_id' in response, got %q", resBody)
 	}
 
 }
