@@ -29,7 +29,10 @@ func (m *MockUserStore) AuthenticateUser(ctx context.Context, email, password st
 func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
 	id, _ := uuid.Parse("123e4567-e89b-12d3-a456-426614174000")
 	return store.User{
-		ID: id,
+		ID:       id,
+		UserName: "Marcos",
+		Email:    "marcos@gmail.com",
+		Bio:      "Hello, world!",
 	}, nil
 }
 
@@ -41,7 +44,7 @@ func TestCreateUser(t *testing.T) {
 	mockStore := MockUserStore{}
 	userService := NewUserService(&mockStore)
 
-	id, err := userService.CreateUser(context.Background(), "Marcos", "marcos@gmail.com", "Senha123456", "Hellom world!")
+	id, err := userService.CreateUser(context.Background(), "Marcos", "marcos@gmail.com", "Senha123456", "Hello, world!")
 
 	assert.NoError(t, err)
 	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id.String())
@@ -56,5 +59,18 @@ func TestAuthenticateUser(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id.String())
+
+}
+
+func TestGetUserByEmail(t *testing.T) {
+	mockStore := MockUserStore{}
+	userService := NewUserService(&mockStore)
+
+	user, err := userService.Store.GetUserByEmail(context.Background(), "marcos@gmail.com")
+	assert.NoError(t, err)
+	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", user.ID.String())
+	assert.Equal(t, "Marcos", user.UserName)
+	assert.Equal(t, "marcos@gmail.com", user.Email)
+	assert.Equal(t, "Hello, world!", user.Bio)
 
 }
