@@ -83,4 +83,10 @@ func (api *Api) handleLogoutUser(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	api.Sessions.Remove(r.Context(), "AuthenticateUserId")
+	jsonutils.EncodeJson(w, r, http.StatusOK, map[string]any{
+		"message": "logged out sucessfully",
+	})
+
 }
