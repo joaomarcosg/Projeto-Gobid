@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -84,6 +85,8 @@ func TestSignupUser(t *testing.T) {
 
 func TestLoginUser(t *testing.T) {
 
+	gob.Register(uuid.UUID{})
+
 	sessionManager := scs.New()
 	sessionManager.Store = memstore.New()
 	sessionManager.Lifetime = 1 * time.Hour
@@ -116,14 +119,14 @@ func TestLoginUser(t *testing.T) {
 		t.Errorf("Statuscode differs; got %d | want %d", rec.Code, http.StatusOK)
 	}
 
-	// var resBody map[string]any
-	// err = json.Unmarshal(rec.Body.Bytes(), &resBody)
-	// if err != nil {
-	// 	t.Fatalf("failed to parse response body:%s\n", err.Error())
-	// }
+	var resBody map[string]any
+	err = json.Unmarshal(rec.Body.Bytes(), &resBody)
+	if err != nil {
+		t.Fatalf("failed to parse response body:%s\n", err.Error())
+	}
 
-	// if resBody["email"] != payLoad["email"] {
-	// 	t.Errorf("email differs; got: %q | want: %q", resBody["email"], payLoad["email"])
-	// }
+	if resBody["message"] != "logged in sucessfully" {
+		t.Errorf("message differs; got %q | want 'logged in sucessfully'", resBody["message"])
+	}
 
 }
