@@ -43,4 +43,15 @@ func (api *Api) handleSignupUser(w http.ResponseWriter, r *http.Request) {
 
 func (api *Api) handleLoginUser(w http.ResponseWriter, r *http.Request) {
 
+	data, problems, err := jsonutils.DecodeValidJson[user.LoginUserReq](r)
+	if err != nil {
+		jsonutils.EncodeJson(w, r, http.StatusUnprocessableEntity, problems)
+		return
+	}
+
+	jsonutils.EncodeJson(w, r, http.StatusOK, map[string]any{
+		"message": "logged in sucessfully",
+		"email":   data.Email,
+	})
+
 }
