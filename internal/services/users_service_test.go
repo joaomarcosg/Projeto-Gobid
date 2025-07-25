@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type MockUserStore struct{}
@@ -28,11 +29,15 @@ func (m *MockUserStore) AuthenticateUser(ctx context.Context, email, password st
 
 func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
 	id, _ := uuid.Parse("123e4567-e89b-12d3-a456-426614174000")
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte("Senha123456"), bcrypt.DefaultCost)
+
 	return store.User{
-		ID:       id,
-		UserName: "Marcos",
-		Email:    "marcos@gmail.com",
-		Bio:      "Hello, world!",
+		ID:           id,
+		UserName:     "Marcos",
+		Email:        "marcos@gmail.com",
+		PasswordHash: hash,
+		Bio:          "Hello, world!",
 	}, nil
 }
 
