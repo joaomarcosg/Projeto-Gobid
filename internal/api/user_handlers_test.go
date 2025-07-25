@@ -78,3 +78,44 @@ func TestSignupUser(t *testing.T) {
 	}
 
 }
+
+func TestLoginUser(t *testing.T) {
+
+	api := Api{
+		UserService: *services.NewUserService(&mockUserStore{}),
+	}
+
+	payLoad := map[string]any{
+		"email":    "marcos.santana@gmail.com",
+		"password": "Marcos@2025",
+	}
+
+	body, err := json.Marshal(payLoad)
+	if err != nil {
+		t.Fatal("fail to parse request payload")
+	}
+
+	req := httptest.NewRequest("POST", "/api/v1/users/loginuser", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rec := httptest.NewRecorder()
+	handler := http.HandlerFunc(api.handleLoginUser)
+	handler.ServeHTTP(rec, req)
+
+	t.Logf("Rec body %s\n", rec.Body.Bytes())
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("Statuscode differs; got %d | want %d", rec.Code, http.StatusOK)
+	}
+
+	var resBody map[string]any
+	err = json.Unmarshal(rec.Body.Bytes(), &resBody)
+	if err != nil {
+		t.Fatalf("failed to parse response body:%s\n", err.Error())
+	}
+
+	if resBody["email"] != payLoad["email"] {
+		t.Errorf("email differs; got: %q | want: %q", resBody["email"], payLoad["email"])
+	}
+
+}
