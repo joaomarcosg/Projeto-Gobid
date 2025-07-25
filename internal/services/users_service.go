@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
 	"golang.org/x/crypto/bcrypt"
@@ -12,6 +13,7 @@ import (
 
 var (
 	ErrDuplicatedEmailOrUserName = errors.New("username or email already exists")
+	ErrInvalidCredentials        = errors.New("invalid credentials")
 )
 
 type UserService struct {
@@ -50,5 +52,24 @@ func (us *UserService) CreateUser(
 }
 
 func (us *UserService) AuthenticateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
-	return uuid.UUID{}, nil
+
+	user, err := us.Store.GetUserByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrInvalidCredentials
+		}
+		return uuid.UUID{}, err
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return uuid.UUID{}, err
+		}
+
+		return uuid.UUID{}, err
+	}
+
+	return user.ID, nil
+
 }
