@@ -48,3 +48,7 @@ func (us *UserService) CreateUser(
 
 	return id, nil
 }
+
+func (us *UserService) AuthenticateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
+}
