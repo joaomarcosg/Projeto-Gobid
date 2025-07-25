@@ -3,11 +3,11 @@ services:
     image: postgres:latest
     restart: unless-stopped
     ports:
-      - ${GO_BID_DATABASE_PORT:-5432}:5432
+      - ${GOBID_DATABASE_PORT:-5432}:5432
     environment:
-      POSTGRES_USER: ${GO_BID_DATABASE_USER}
-      POSTGRES_PASSWORD: ${GO_BID_DATABASE_PASSWORD}
-      POSTGRES_DB: ${GO_BID_DATABASE_NAME}
+      POSTGRES_USER: ${GOBID_DATABASE_USER}
+      POSTGRES_PASSWORD: ${GOBID_DATABASE_PASSWORD}
+      POSTGRES_DB: ${GOBID_DATABASE_NAME}
     volumes:
       - db:/var/lib/postgresql/data
 
