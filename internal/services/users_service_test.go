@@ -22,11 +22,15 @@ func (m *MockUserStore) CreateUser(
 }
 
 func (m *MockUserStore) AuthenticateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
-	return uuid.UUID{}, nil
+	id, _ := uuid.Parse("123e4567-e89b-12d3-a456-426614174000")
+	return id, nil
 }
 
 func (m *MockUserStore) GetUserByEmail(ctx context.Context, email string) (store.User, error) {
-	return store.User{}, nil
+	id, _ := uuid.Parse("123e4567-e89b-12d3-a456-426614174000")
+	return store.User{
+		ID: id,
+	}, nil
 }
 
 func (m *MockUserStore) GetUserById(ctx context.Context, id uuid.UUID) (store.User, error) {
@@ -38,6 +42,17 @@ func TestCreateUser(t *testing.T) {
 	userService := NewUserService(&mockStore)
 
 	id, err := userService.CreateUser(context.Background(), "Marcos", "marcos@gmail.com", "Senha123456", "Hellom world!")
+
+	assert.NoError(t, err)
+	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id.String())
+
+}
+
+func TestAuthenticateUser(t *testing.T) {
+	mockStore := MockUserStore{}
+	userService := NewUserService(&mockStore)
+
+	id, err := userService.AuthenticateUser(context.Background(), "marcos@gmail.com", "Senha123456")
 
 	assert.NoError(t, err)
 	assert.Equal(t, "123e4567-e89b-12d3-a456-426614174000", id.String())
