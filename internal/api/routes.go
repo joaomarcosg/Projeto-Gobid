@@ -20,6 +20,7 @@ func (api *Api) BindRoutes() {
 
 	api.Router.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
+			r.Get("/csrftoken", api.handleGetCSRFToken)
 			r.Route("/users", func(r chi.Router) {
 				r.Post("/signup", api.handleSignupUser)
 				r.Post("/loginuser", api.handleLoginUser)
