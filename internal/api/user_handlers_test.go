@@ -130,3 +130,48 @@ func TestLoginUser(t *testing.T) {
 	}
 
 }
+
+func TestLogoutUser(t *testing.T) {
+
+	gob.Register(uuid.UUID{})
+
+	sessionManager := scs.New()
+	sessionManager.Store = memstore.New()
+	sessionManager.Lifetime = 1 * time.Hour
+
+	api := Api{
+		Sessions: sessionManager,
+	}
+
+	req := httptest.NewRequest("POST", "/api/v1/users/logoutuser", nil)
+	rec := httptest.NewRecorder()
+
+	ctx, _ := sessionManager.Load(req.Context(), "")
+	sessionManager.Put(ctx, "AuthenticateUserId", uuid.New())
+
+	req = req.WithContext(ctx)
+
+	handler := sessionManager.LoadAndSave(http.HandlerFunc(api.handleLogoutUser))
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("status differs; got %q | want %q", rec.Code, http.StatusOK)
+	}
+
+	var resBody map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &resBody); err != nil {
+		t.Fatalf("failed to parse response body:%s\n", err.Error())
+	}
+
+	cookie := rec.Header().Get("Set-cookie")
+	newReq := httptest.NewRequest("POST", "/dummy", nil)
+	newReq.Header.Set("Cookie", cookie)
+
+	newCtx, _ := sessionManager.Load(newReq.Context(), "")
+	authUser := sessionManager.Get(newCtx, "AuthenticateUserId")
+
+	if authUser != nil {
+		t.Errorf("expected session value to be removed, but got: %v", authUser)
+	}
+
+}
