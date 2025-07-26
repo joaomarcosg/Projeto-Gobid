@@ -9,7 +9,7 @@ import (
 )
 
 func (api *Api) BindRoutes() {
-	api.Router.Use(middleware.RequestID, middleware.Recoverer, middleware.logger, api.Sessions.LoadAndSave)
+	api.Router.Use(middleware.RequestID, middleware.Recoverer, middleware.Logger, api.Sessions.LoadAndSave)
 
 	csrfMiddleware := csrf.Protect(
 		[]byte(os.Getenv("GOBID_CSRF_KEY")),
