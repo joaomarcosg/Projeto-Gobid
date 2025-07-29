@@ -84,8 +84,18 @@ func TestCreateProduct(t *testing.T) {
 		t.Fatalf("failed to parse response body:%s\n", err.Error())
 	}
 
-	if resBody["id"] != "id" {
-		t.Errorf("id differs; got %q | want 'id'", resBody["id"])
+	productIDstr, ok := resBody["id"].(string)
+	if !ok {
+		t.Fatalf("id is not a string: %q", resBody["id"])
+	}
+
+	productID, err := uuid.Parse(productIDstr)
+	if err != nil {
+		t.Fatalf("invalid uuid: %q", productIDstr)
+	}
+
+	if productID == uuid.Nil {
+		t.Errorf("productID cannot be nil")
 	}
 
 }
