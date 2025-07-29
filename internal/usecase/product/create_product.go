@@ -27,7 +27,7 @@ func (req CreateProductReq) Valid(ctx context.Context) validator.Evaluator {
 	eval.CheckField(validator.NotBlank(req.Description), "description", "this field cannot be blank")
 	eval.CheckField(validator.MinChars(req.Description, 10) &&
 		validator.MaxChars(req.Description, 255), "description", "this field must have a length betwenn 10 and 255")
-	eval.CheckField(req.Baseprice < 0, "baseprice", "this field must be greater than 0")
+	eval.CheckField(req.Baseprice > 0, "baseprice", "this field must be greater than 0")
 	eval.CheckField(req.AuctionEnd.Sub(time.Now()) >= minAuctionDuration, "auction_end", "must be at least two hours duration")
 
 	return eval
