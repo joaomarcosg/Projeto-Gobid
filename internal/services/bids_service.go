@@ -1,6 +1,8 @@
 package services
 
-import "github.com/joaomarcosg/Projeto-Gobid/internal/store"
+import (
+	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
+)
 
 type BidService struct {
 	Store store.BidStore
