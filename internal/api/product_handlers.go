@@ -16,7 +16,7 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := api.Sessions.Get(r.Context(), "AuthenticatedUserId").(uuid.UUID)
+	userID, ok := api.Sessions.Get(r.Context(), "AuthenticateUserId").(uuid.UUID)
 	if !ok {
 		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
 			"error": "unexpected error, try again later",
