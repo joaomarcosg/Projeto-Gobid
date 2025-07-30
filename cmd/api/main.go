@@ -46,7 +46,8 @@ func main() {
 		panic(err)
 	}
 
-	store := pgstore.NewPGUserStore(pool)
+	userStore := pgstore.NewPGUserStore(pool)
+	productStore := pgstore.NewPGProductStore(pool)
 
 	s := scs.New()
 	s.Store = pgxstore.New(pool)
@@ -55,9 +56,10 @@ func main() {
 	s.Cookie.SameSite = http.SameSiteLaxMode
 
 	api := api.Api{
-		Router:      chi.NewMux(),
-		UserService: *services.NewUserService(store),
-		Sessions:    s,
+		Router:         chi.NewMux(),
+		UserService:    *services.NewUserService(userStore),
+		ProductService: *services.NewProductService(productStore),
+		Sessions:       s,
 	}
 
 	api.BindRoutes()
