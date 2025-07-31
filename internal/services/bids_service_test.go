@@ -23,7 +23,29 @@ func (m *MockBidStore) CreateBid(ctx context.Context, productID, bidderID uuid.U
 }
 
 func (m *MockBidStore) GetBidsByProduct(ctx context.Context, productID uuid.UUID) ([]store.Bid, error) {
-	return []store.Bid{}, nil
+
+	firstID := uuid.New()
+	firstBidID := uuid.New()
+
+	secondID := uuid.New()
+	secondBidID := uuid.New()
+
+	return []store.Bid{
+		{
+			ID:        firstID,
+			ProductID: productID,
+			BidderID:  firstBidID,
+			BidAmount: 99.99,
+			CreatedAt: time.Now(),
+		},
+		{
+			ID:        secondID,
+			ProductID: productID,
+			BidderID:  secondBidID,
+			BidAmount: 130.00,
+			CreatedAt: time.Now(),
+		},
+	}, nil
 }
 
 func (m *MockBidStore) GetHighestBidByProductId(ctx context.Context, productID uuid.UUID) (store.Bid, error) {
@@ -57,6 +79,21 @@ func TestCreateBid(t *testing.T) {
 	assert.Equal(t, productID, bid.ProductID)
 	assert.Equal(t, bidAmount, bid.BidAmount)
 	assert.Equal(t, id, bid.ID)
+}
+
+func TestGetBidsByProduct(t *testing.T) {
+
+	mockStore := MockBidStore{}
+	bidService := NewBidService(&mockStore)
+
+	ctx := context.Background()
+	productID := uuid.New()
+
+	bids, err := bidService.Store.GetBidsByProduct(ctx, productID)
+
+	assert.NoError(t, err)
+	assert.NotEqual(t, len(bids), 0)
+
 }
 
 func TestHighestBidByProductId(t *testing.T) {
