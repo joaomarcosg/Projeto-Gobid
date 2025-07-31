@@ -12,6 +12,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/api"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
@@ -60,6 +61,11 @@ func main() {
 		UserService:    *services.NewUserService(userStore),
 		ProductService: *services.NewProductService(productStore),
 		Sessions:       s,
+		WsUpgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
 	}
 
 	api.BindRoutes()
