@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/jsonutils"
+	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
 )
 
 func (api *Api) handleSubscribeToAuction(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +33,15 @@ func (api *Api) handleSubscribeToAuction(w http.ResponseWriter, r *http.Request)
 
 		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
 			"message": "unexpected error, try again later",
+		})
+		return
+	}
+
+	userID, ok := api.Sessions.Get(r.Context(), "AuthenticateUserId").(uuid.UUID)
+	if !ok {
+		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
+			"message": "unexpected error, try again later",
+			"user_id": userID,
 		})
 		return
 	}
