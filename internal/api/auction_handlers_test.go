@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -25,5 +26,20 @@ func TestHandleSubscribeToAuctionWithInvalidUUID(t *testing.T) {
 	handler.ServeHTTP(rec, req)
 
 	t.Logf("Rec body %s\n", rec.Body.Bytes())
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("Statuscode differs; got %d | want %d", rec.Code, http.StatusBadRequest)
+	}
+
+	var resBody map[string]any
+	err := json.Unmarshal(rec.Body.Bytes(), &resBody)
+
+	if err != nil {
+		t.Fatalf("failed to parse response body:%s\n", err.Error())
+	}
+
+	if resBody["message"] != "invalid product id - must be a valid uuid" {
+		t.Errorf("expected 'invalid product id - must be a valid uuid, got %q", resBody["message"])
+	}
 
 }
