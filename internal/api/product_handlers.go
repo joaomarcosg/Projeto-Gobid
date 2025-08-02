@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -43,4 +44,7 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	jsonutils.EncodeJson(w, r, http.StatusCreated, map[string]any{
 		"id": productID,
 	})
+
+	ctx, _ := context.WithDeadline(context.Background(), data.AuctionEnd)
+
 }
