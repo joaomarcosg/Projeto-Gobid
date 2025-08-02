@@ -89,12 +89,18 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 	}
 
 	validUUID := uuid.New().String()
+	userID := uuid.New()
 
 	req := httptest.NewRequest("GET", "/api/v1/products/ws/subscribe/"+validUUID, nil)
 
 	routeContext := chi.NewRouteContext()
 	routeContext.URLParams.Add("product_id", validUUID)
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeContext))
+
+	ctx, _ := sessionManager.Load(req.Context(), "")
+	sessionManager.Put(ctx, "AuthenticateUserId", userID)
+
+	req = req.WithContext(ctx)
 
 	rec := httptest.NewRecorder()
 	handler := api.Sessions.LoadAndSave(http.HandlerFunc(api.handleSubscribeToAuction))
