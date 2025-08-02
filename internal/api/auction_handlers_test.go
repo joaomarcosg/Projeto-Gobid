@@ -97,13 +97,21 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeContext))
 
 	rec := httptest.NewRecorder()
-	handler := http.HandlerFunc(api.handleSubscribeToAuction)
+	handler := api.Sessions.LoadAndSave(http.HandlerFunc(api.handleSubscribeToAuction))
 	handler.ServeHTTP(rec, req)
 
 	t.Logf("Rec body %s\n", rec.Body.Bytes())
 
 	if rec.Code == http.StatusBadRequest {
 		t.Fatalf("invalid operation, expected a different code than %q", http.StatusBadRequest)
+	}
+
+	if rec.Code == http.StatusNotFound {
+		t.Fatal("no product with the given id")
+	}
+
+	if rec.Code == http.StatusInternalServerError {
+		t.Fatal("unexpected error, try again later")
 	}
 
 }
