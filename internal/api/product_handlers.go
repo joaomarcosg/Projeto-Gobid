@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/jsonutils"
+	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/usecase/product"
 )
 
@@ -46,5 +47,10 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	})
 
 	ctx, _ := context.WithDeadline(context.Background(), data.AuctionEnd)
+	auctionRoom := services.NewAuctionRoom(ctx, productID, api.BidService)
+
+	api.AuctionLobby.Lock()
+	api.AuctionLobby.Rooms[productID] = auctionRoom
+	api.AuctionLobby.Unlock()
 
 }
