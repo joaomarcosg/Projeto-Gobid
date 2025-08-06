@@ -182,3 +182,44 @@ func (c *Client) ReadEventLoop() {
 		c.Room.Broadcast <- m
 	}
 }
+
+func (c *Client) WriteEventLoop() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		c.Conn.Close()
+	}()
+
+	for {
+		select {
+		case message, ok := <-c.Send:
+			if !ok {
+				c.Conn.WriteJSON(Message{
+					Kind:    websocket.CloseMessage,
+					Message: "closing websocket conn",
+				})
+				return
+			}
+
+			if message.Kind == AuctionFinished {
+				close(c.Send)
+				return
+			}
+
+			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+
+			err := c.Conn.WriteJSON(message)
+			if err != nil {
+				c.Room.Unregister <- c
+				return
+			}
+		case <-ticker.C:
+			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				slog.Error("Unexpected Write error", "error", err)
+				return
+			}
+		}
+	}
+
+}
