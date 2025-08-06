@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -18,6 +19,7 @@ const (
 	SucessfullyPlaceBid
 
 	FailedToPlaceBid
+	InvalidJson
 
 	NewBidPlaced
 	AuctionFinished
@@ -136,5 +138,47 @@ func NewClient(room *AuctionRoom, conn *websocket.Conn, userID uuid.UUID) *Clien
 		Conn:   conn,
 		Send:   make(chan Message, 512),
 		UserID: userID,
+	}
+}
+
+const (
+	maxMessageSize = 512
+	readDeadline   = 60 * time.Second
+	writeWait      = 10 * time.Second
+	pingPeriod     = (readDeadline * 9) / 10
+)
+
+func (c *Client) ReadEventLoop() {
+	defer func() {
+		c.Room.Unregister <- c
+		c.Conn.Close()
+	}()
+
+	c.Conn.SetReadLimit(maxMessageSize)
+	c.Conn.SetReadDeadline(time.Now().Add(readDeadline))
+	c.Conn.SetPongHandler(func(string) error {
+		c.Conn.SetReadDeadline(time.Now().Add(readDeadline))
+		return nil
+	})
+
+	for {
+		var m Message
+		m.UserID = c.UserID
+		err := c.Conn.ReadJSON(&m)
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				slog.Error("Unexpected Close error", "error", err)
+				return
+			}
+
+			c.Room.Broadcast <- Message{
+				Kind:    InvalidJson,
+				Message: "this message should be a valid JSON",
+				UserID:  m.UserID,
+			}
+			continue
+		}
+
+		c.Room.Broadcast <- m
 	}
 }
