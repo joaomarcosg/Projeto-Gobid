@@ -46,13 +46,24 @@ func (pgb *PGBidStore) CreateBid(
 
 }
 
-func (pgb *PGBidStore) GetBidsByProduct(ctx context.Context, productID uuid.UUID) ([]Bid, error) {
+func (pgb *PGBidStore) GetBidsByProduct(ctx context.Context, productID uuid.UUID) ([]store.Bid, error) {
 
-	bids, err := pgb.Queries.GetBidsByProduct(ctx, productID)
+	dbBids, err := pgb.Queries.GetBidsByProduct(ctx, productID)
 	if err != nil {
-		return nil, err
+		return []store.Bid{}, err
 	}
 
+	bids := make([]store.Bid, len(dbBids))
+
+	for i, b := range dbBids {
+		bids[i] = store.Bid{
+			ID:        b.ID,
+			ProductID: b.ProductID,
+			BidderID:  b.BidderID,
+			BidAmount: b.BidAmount,
+			CreatedAt: b.CreatedAt,
+		}
+	}
 	return bids, nil
 
 }
