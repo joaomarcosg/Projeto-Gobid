@@ -49,6 +49,7 @@ func main() {
 
 	userStore := pgstore.NewPGUserStore(pool)
 	productStore := pgstore.NewPGProductStore(pool)
+	bidStore := pgstore.NewPGBidStore(pool)
 
 	s := scs.New()
 	s.Store = pgxstore.New(pool)
@@ -65,6 +66,10 @@ func main() {
 			CheckOrigin: func(r *http.Request) bool {
 				return true
 			},
+		},
+		BidService: *services.NewBidService(bidStore),
+		AuctionLobby: services.AuctionLobby{
+			Rooms: make(map[uuid.UUID]*services.AuctionRoom),
 		},
 	}
 
