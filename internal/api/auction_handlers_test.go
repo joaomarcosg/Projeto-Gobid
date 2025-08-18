@@ -42,14 +42,27 @@ func (m *mockProductStoreHandler) GetProductById(ctx context.Context, productID 
 	}, nil
 }
 
-type mockBidService struct{}
+type mockBidStore struct{}
 
-func (m *mockBidService) PlaceBid(
+func (m *mockBidStore) CreateBid(
 	ctx context.Context,
 	productID,
 	bidderID uuid.UUID,
-	amount float64,
+	bidAmount float64,
 ) (store.Bid, error) {
+	return store.Bid{
+		ID:        uuid.New(),
+		ProductID: productID,
+		BidderID:  bidderID,
+		BidAmount: bidAmount,
+	}, nil
+}
+
+func (m *mockBidStore) GetBidsByProduct(ctx context.Context, productID uuid.UUID) ([]store.Bid, error) {
+	return []store.Bid{}, nil
+}
+
+func (m *mockBidStore) GetHighestBidByProductId(ctx context.Context, productID uuid.UUID) (store.Bid, error) {
 	return store.Bid{}, nil
 }
 
@@ -101,6 +114,7 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 	}
 
 	validUUID := uuid.New().String()
+	productID := uuid.MustParse(validUUID)
 	userID := uuid.New()
 
 	req := httptest.NewRequest("GET", "/api/v1/products/ws/subscribe/"+validUUID, nil)
