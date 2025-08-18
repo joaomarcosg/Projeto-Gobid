@@ -42,6 +42,17 @@ func (m *mockProductStoreHandler) GetProductById(ctx context.Context, productID 
 	}, nil
 }
 
+type mockBidService struct{}
+
+func (m *mockBidService) PlaceBid(
+	ctx context.Context,
+	productID,
+	bidderID uuid.UUID,
+	amount float64,
+) (store.Bid, error) {
+	return store.Bid{}, nil
+}
+
 func TestHandleSubscribeToAuctionWithInvalidUUID(t *testing.T) {
 
 	api := Api{}
@@ -86,6 +97,7 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 	api := Api{
 		ProductService: *services.NewProductService(&mockProductStoreHandler{}),
 		Sessions:       sessionManager,
+		AuctionLobby:   services.AuctionLobby{Rooms: make(map[uuid.UUID]*services.AuctionRoom)},
 	}
 
 	validUUID := uuid.New().String()
