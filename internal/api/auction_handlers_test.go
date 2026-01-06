@@ -111,11 +111,22 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 		ProductService: *services.NewProductService(&mockProductStoreHandler{}),
 		Sessions:       sessionManager,
 		AuctionLobby:   services.AuctionLobby{Rooms: make(map[uuid.UUID]*services.AuctionRoom)},
+		BidService:     services.BidService{Store: &mockBidStore{}},
 	}
 
 	validUUID := uuid.New().String()
 	productID := uuid.MustParse(validUUID)
 	userID := uuid.New()
+
+	api.AuctionLobby.Rooms[productID] = &services.AuctionRoom{
+		Id:          productID,
+		Context:     context.Background(),
+		Broadcast:   make(chan services.Message),
+		Register:    make(chan *services.Client),
+		Unregister:  make(chan *services.Client),
+		Clients:     make(map[uuid.UUID]*services.Client),
+		BidsService: &api.BidService,
+	}
 
 	req := httptest.NewRequest("GET", "/api/v1/products/ws/subscribe/"+validUUID, nil)
 
