@@ -44,13 +44,18 @@ func TestCreateProduct(t *testing.T) {
 	api := Api{
 		ProductService: *services.NewProductService(&mockProductStore{}),
 		Sessions:       sessionManager,
+		AuctionLobby: services.AuctionLobby{
+			Rooms: make(map[uuid.UUID]*services.AuctionRoom),
+		},
 	}
+
+	auctionEnd := time.Now().Add(3 * time.Hour).UTC()
 
 	payLoad := map[string]any{
 		"product_name": "produto de teste",
 		"description":  "descrição de teste",
 		"baseprice":    100.00,
-		"auction_end":  "2025-08-30T15:00:00Z",
+		"auction_end":  auctionEnd.Format(time.RFC3339),
 	}
 
 	body, err := json.Marshal(payLoad)
