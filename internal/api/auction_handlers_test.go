@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -13,6 +15,7 @@ import (
 	"github.com/alexedwards/scs/v2/memstore"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store"
 )
@@ -128,33 +131,48 @@ func TestHandleSubscribeToAuctionWithValidUUID(t *testing.T) {
 		BidsService: &api.BidService,
 	}
 
-	req := httptest.NewRequest("GET", "/api/v1/products/ws/subscribe/"+validUUID, nil)
+	router := chi.NewRouter()
 
-	routeContext := chi.NewRouteContext()
-	routeContext.URLParams.Add("product_id", validUUID)
-	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeContext))
+	router.Get("/api/v1/products/ws/subscribe/{product_id}", api.handleSubscribeToAuction)
+
+	srv := httptest.NewServer(api.Sessions.LoadAndSave(router))
+	defer srv.Close()
+
+	wsURL := "ws" + strings.TrimPrefix(srv.URL, "http") + "/api/v1/products/ws/subscribe/" + validUUID
+
+	dialer := websocket.DefaultDialer
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
 
 	ctx, _ := sessionManager.Load(req.Context(), "")
 	sessionManager.Put(ctx, "AuthenticateUserId", userID)
 
-	req = req.WithContext(ctx)
-
-	rec := httptest.NewRecorder()
-	handler := api.Sessions.LoadAndSave(http.HandlerFunc(api.handleSubscribeToAuction))
-	handler.ServeHTTP(rec, req)
-
-	t.Logf("Rec body %s\n", rec.Body.Bytes())
-
-	if rec.Code == http.StatusBadRequest {
-		t.Fatalf("invalid operation, expected a different code than %q", http.StatusBadRequest)
+	token, expiry, err := sessionManager.Commit(ctx)
+	if err != nil {
+		t.Fatal(err)
 	}
+	sessionManager.WriteSessionCookie(ctx, w, token, expiry)
 
-	if rec.Code == http.StatusNotFound {
-		t.Fatal("no product with the given id")
+	cookie := w.Result().Cookies()[0].String()
+
+	header := http.Header{}
+	header.Add("Cookie", cookie)
+
+	conn, resp, err := dialer.Dial(wsURL, header)
+	if err != nil {
+		if resp != nil {
+			body, _ := io.ReadAll(resp.Body)
+			t.Fatalf("failed to connect websocket: %v | status: %d | body: %s",
+				err, resp.StatusCode, string(body))
+		}
+		t.Fatalf("failed to connect websocket: %v", err)
 	}
+	defer conn.Close()
 
-	if rec.Code == http.StatusInternalServerError {
-		t.Fatal("unexpected error, try again later")
+	err = conn.WriteMessage(websocket.TextMessage, []byte("hello auction"))
+	if err != nil {
+		t.Fatalf("fail to write message: %v", err)
 	}
 
 }
