@@ -14,8 +14,8 @@ services:
       - GOBID_DATABASE_PORT=${GOBID_DATABASE_PORT}
       - GOBID_CSRF_KEY=${GOBID_CSRF_KEY}
     depends_on:
-      - db:
-          condition: service_healthy
+      db:
+        condition: service_healthy
     restart: unless-stopped
   db:
     image: postgres:latest
