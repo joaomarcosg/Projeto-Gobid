@@ -1,78 +1,105 @@
-## Websocket API - Leilão em Tempo Real
+<h1 align="center" style="font-weight:bold;">Websocket API Real-Time Auction</h1>
 
-### 👨‍💻 Tecnologias e ferramentas
+<p align="center">
+ <a href="#tech">Technologies</a> • 
+ <a href="#started">Getting Started</a> • 
+  <a href="#routes">API Endpoints</a>
+</p>
 
-| Tecnologia | Descrição |
-| ---------- | --------- |
-| Go | Linguagem de programação estaticamente tipada |
-| Chi | Framework Go para criação de servidores HTTP |
-| Postgres | Banco de dados relacional |
-| Docker | Plataforma de software para implantar aplicativos em containers |
-| Gorilla Websocket | Biblioteca para implementação de comunicação em tempo real |
-| SCS - Session Manager | Autentição baseada em sessões |
+<p align="center">
+    <b>
+    A WebSocket API developed in Go to allow users to track and participate in auctions in real time.
+    This real-time communication application was created as a way to put my knowledge of concurrency using Go into practice.
+    </b>
+</p>
 
-### 📝 Descrição do projeto
+<h2 id="technologies">💻 Technologies</h2>
 
-Uma API WebSocket desenvolvida em Go para permitir que usuários acompanhem e participem de leilões em tempo real. Ideal para plataformas de e-commerce, marketplaces ou qualquer aplicação com necessidade de comunicação em tempo real.
+| Technology | Description |
+| ---------- | ----------- |
+| Go | Statically typed programming language |
+| Chi | Go framework for creating HTTP servers |
+| Postgres | Relational database |
+| Docker | Software platform for deploying containerized applications |
+| Gorilla Websocket | Library for implementing real-time communication |
+| SCS - Session Manager | Session-based authentication |
 
-### ⚡ Funcionalidades do projeto
+<h2 id="started">🚀 Getting started</h2>
 
-- Comunicação bidirecional via Websocket
-- Autenticação de usuários via sessão
-- Inscrição para receber eventos de produtos/leilões específicos
-- Notificações em tempo real sobre lances atualizados
+<h3>Prerequisites</h3>
 
-### ⚙ Endpoints
-
-- Obter token de autenticação: ```/api/v1/csrftoken```
-- Inscrição de usuários: ```/api/v1/users/signupuser```
-- Login de usuários: ```/api/v1/users/loginuser```
-- Logout de usuários: ```/api/v1/users/logout```
-- Criar produto: ```/api/v1/products/```
-- Upgrade de conexão websocket: ```/api/v1/products/ws/subscribe{product_id}```
-
-### 📂 Estrutura de pastas
-
-```shell
-├───cmd                      # pontos de entrada da aplicação
-│   ├───api                  # API aplicada
-│   └───terndotenv           # roda migrations
-└───internal                 # lógica de negócio
-    ├───api                  # handlers, rotas e lógica de comunicação HTTP/Websocket
-    ├───jsonutils            # funções que lidam com requisições HTTP
-    ├───services             # funções de tratamento das requisições
-    ├───store                # banco de dados
-    │   └───pgstore          # funcionalidades do banco de dados postgres
-    │       ├───migrations   # migrações do banco de dados
-    │       └───queries      # queries para manipulação do banco de dados
-    ├───usecase              # casos de uso
-    │   ├───product          # funções para caso de uso de produtos
-    │   └───user             # funções para caso de uso de usuários
-    └───validator            # funções de validação do JSON
-```
-
-### 🚀 Rodando localmente
-
-**Pré-requisitos:**
 - Go 1.20+
 
-**Clone o repositório**
+<h3>clone the repository</h3>
+
 ```bash
 git clone https://github.com/joaomarcosg/Projeto-Gobid.git
 ```
 
-**Instale as dependências**
+<h3>Install the dependencies.</h3>
+
 ```bash
 go mod tidy
 ```
 
-**Rode o servidor**
+<h3>Config .env variables</h2>
+
+Use the `.env.example` as reference to create your configuration file `.env`
+
+```yaml
+GOBID_APP_PORT=8080
+GOBID_DATABASE_PORT=5432
+GOBID_DATABASE_NAME=bid
+GOBID_DATABASE_USER=postgres
+GOBID_DATABASE_PASSWORD=123
+GOBID_DATABASE_HOST=localhost
+GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz
+```
+
+<h3>Starting</h3>
+
 ```bash
+cd gobid
 go run /cmd/api/main.go
 ```
 
-**Testes**
-```bash
-go test ./...
+<h2 id="routes">📍 API Endpoints</h2>
+
+| Route | Description |
+| ----- | ----------- |
+| <kbd>POST /api/v1/users/signupuser | User registration [request details](#post-signup-user) |
+| <kbd>GET /api/v1/csrftoken</kbd> | Get authentication token [response details](#get-auth-detail) |
+| <kbd>POST /api/v1/users/loginuser | User login [request details](#post-login-user)  |
+| <kbd>POST /api/v1/users/logout | User logout  |
+| <kbd>POST /api/v1/products/ | Create product |
+| <kbd>GET /api/v1/products/ws/subscribe{product_id} | WebSocket connection upgrade |
+
+<h3 id="post-signup-user">POST /api/v1/users/signupuser</h3>
+
+**REQUEST**
+```json
+{
+    "user_name": "johndoe",
+	"email": "johndoe@email.com",
+	"password": "Password123",
+	"bio": "testing my api"
+}
 ```
+
+**RESPONSE**
+```json
+{
+	"user_id": "0db87e24-895b-4d11-8c35-95b2387dd211"
+}
+```
+
+<h3 id="get-auth-detail">GET /api/v1/csrftoken</h3>
+
+**RESPONSE**
+```json
+{
+	"csrf_token": "tOZEaiWTtM2ZcxiteUuNmdob3ZFshZ7a1XWJuwxeE0UZE32nXjsXeHHfoid0GKNTIqXs7O4/tNs+v3FEIIgzUg=="
+}
+```
+
 
