@@ -33,7 +33,7 @@
 <h3>clone the repository</h3>
 
 ```bash
-git clone https://github.com/joaomarcosg/Projeto-Gobid.git
+git clone https://github.com/joaomarcosg/Gobid-Project.git
 ```
 
 <h3>Install the dependencies.</h3>
@@ -58,10 +58,10 @@ GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz
 
 <h3>Starting</h3>
 
-```bash
-cd gobid
-go run /cmd/api/main.go
-```
+    ```bash
+    cd gobid
+    go run /cmd/api/main.go
+    ```
 
 <h2 id="routes">📍 API Endpoints</h2>
 
