@@ -1,0 +1,52 @@
+definitions:
+  github_com_joaomarcosg_Projeto-Gobid_internal_usecase_user.CreateUserReq:
+    properties:
+      bio:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    type: object
+  internal_api.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_api.SignupUserResponse:
+    properties:
+      user_id:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/users/signupuser:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the system
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_joaomarcosg_Projeto-Gobid_internal_usecase_user.CreateUserReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.SignupUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_api.ErrorResponse'
+      summary: Creates a new user
+      tags:
+      - users
+swagger: "2.0"
