@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/joaomarcos/Projeto-Gobid/docs"
+	_ "github.com/joaomarcosg/Projeto-Gobid/docs"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/api"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store/pgstore"
