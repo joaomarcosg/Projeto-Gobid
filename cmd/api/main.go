@@ -14,12 +14,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/joaomarcos/Projeto-Gobid/docs"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/api"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/services"
 	"github.com/joaomarcosg/Projeto-Gobid/internal/store/pgstore"
 	"github.com/joho/godotenv"
 )
 
+// @title Gobid API
+// @version 1.0
+// @description Auction system API
+// @host localhost:8080
+// @BasePath /api/v1
 func main() {
 
 	gob.Register(uuid.UUID{})
