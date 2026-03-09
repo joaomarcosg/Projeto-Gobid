@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/csrf"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func (api *Api) BindRoutes() {
@@ -17,6 +18,8 @@ func (api *Api) BindRoutes() {
 	)
 
 	api.Router.Use(csrfMiddleware)
+
+	api.Router.Get("/swagger/*", httpSwagger.Handler())
 
 	api.Router.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
