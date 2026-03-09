@@ -9,6 +9,15 @@ import (
 	"github.com/joaomarcosg/Projeto-Gobid/internal/usecase/user"
 )
 
+// @Summary Creates a new user
+// @Description Creates a new user in the system
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body  UserRequest true "User data"
+// @Success 201 {object} UserResponse
+// @Failure 400 {object} ErrorResponse
+// @Router /users/signupuser [post]
 func (api *Api) handleSignupUser(w http.ResponseWriter, r *http.Request) {
 
 	data, problems, err := jsonutils.DecodeValidJson[user.CreateUserReq](r)
