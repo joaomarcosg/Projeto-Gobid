@@ -15,7 +15,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param user body  user.CreateUserReq true "User data"
-// @Success 201 {object} UserResponse
+// @Success 201 {object} SignupUserResponse
 // @Failure 400 {object} ErrorResponse
 // @Router /api/v1/users/signupuser [post]
 func (api *Api) handleSignupUser(w http.ResponseWriter, r *http.Request) {
