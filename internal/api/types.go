@@ -6,6 +6,6 @@ type SignupUserResponse struct {
 	UserID uuid.UUID `json:"user_id"`
 }
 
-type ErrorReponse struct {
+type ErrorResponse struct {
 	Message string `json:"message"`
 }
