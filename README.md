@@ -69,12 +69,21 @@ GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz1234567
 
 | Route | Description |
 | ----- | ----------- |
-| <kbd>POST /api/v1/users/signupuser | User registration [request details](#post-signup-user) |
 | <kbd>GET /api/v1/csrftoken</kbd> | Get authentication token [response details](#get-auth-detail) |
+| <kbd>POST /api/v1/users/signupuser | User registration [request details](#post-signup-user) |
 | <kbd>POST /api/v1/users/loginuser | User login [request details](#post-login-user)  |
 | <kbd>POST /api/v1/users/logout | User logout [response details](#post-logout-user)  |
 | <kbd>POST /api/v1/products/ | Create product [response details](#create-product) |
 | <kbd>GET /api/v1/products/ws/subscribe{product_id} | WebSocket connection upgrade [response details](#websocket)  |
+
+<h3 id="get-auth-detail">GET /api/v1/csrftoken</h3>
+
+**RESPONSE**
+```json
+{
+	"csrf_token": "tOZEaiWTtM2ZcxiteUuNmdob3ZFshZ7a1XWJuwxeE0UZE32nXjsXeHHfoid0GKNTIqXs7O4/tNs+v3FEIIgzUg=="
+}
+```
 
 <h3 id="post-signup-user">POST /api/v1/users/signupuser</h3>
 
@@ -92,15 +101,6 @@ GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz1234567
 ```json
 {
 	"user_id": "0db87e24-895b-4d11-8c35-95b2387dd211"
-}
-```
-
-<h3 id="get-auth-detail">GET /api/v1/csrftoken</h3>
-
-**RESPONSE**
-```json
-{
-	"csrf_token": "tOZEaiWTtM2ZcxiteUuNmdob3ZFshZ7a1XWJuwxeE0UZE32nXjsXeHHfoid0GKNTIqXs7O4/tNs+v3FEIIgzUg=="
 }
 ```
 
@@ -148,8 +148,11 @@ GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz1234567
     "message": "logged out sucessfully"
 }
 ```
+<h3 id="websocket">GET /api/v1/products/ws/subscribe/{product_id}</h3>
 
 
+**REQUEST**
+```/api/v1/products/ws/subscribe/0db87e24-895b-4d11-8c35-95b2387dd211```
 
 
 
