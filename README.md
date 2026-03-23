@@ -60,10 +60,10 @@ GOBID_CSRF_KEY=abcdefghijlmnopqrstuvwxyz1234567
 
 <h3>Starting</h3>
 
-    ```bash
+```bash
     cd gobid
     go run /cmd/api/main.go
-    ```
+```
 
 <h2 id="routes">📍 API Endpoints</h2>
 
